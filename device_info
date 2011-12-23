@@ -8,7 +8,18 @@ $i = new iPhoneCommunicator();
 
 if (isset($argv[1]) && isset($i->devices[$argv[1]]))
 {
-	print_r($i->devices[$argv[1]]);
+	if (isset($argv[2]))
+	{
+		if (isset($i->devices[$argv[1]]->$argv[2]))
+		{
+			echo $i->devices[$argv[1]]->$argv[2] . "\n";
+		} else {
+			echo "Invalid device option.\n";
+		}
+	} else {
+		print_r($i->devices[$argv[1]]);
+	}
+
 } else {
 	print_r($i->devices);
 }
