@@ -1,0 +1,79 @@
+#!/usr/bin/php
+<?php
+
+/*
+********************************************************************************
+*
+*			Definitions / Configuration
+*
+********************************************************************************
+*/
+
+require_once('include/bootstrap.php');
+
+// This location
+$this_location = array(
+	'latitude' => '30.158292',
+	'longitude' => '-97.781247',
+);
+
+// Default text to use if cannot find text match for zone
+$zone= 'Unknown location';
+
+// Convert argument to friendly label
+$zones = array(
+	'office'	=> 'Office',
+	'office_door'	=> 'Office Doorway',
+	'front'		=> 'Living Room',
+	'front_door'	=> 'Front Door',
+);
+
+/*
+********************************************************************************
+*
+*			    Main Code Block
+*
+********************************************************************************
+*/
+
+// Dump out usage if no arguments passed
+if (count($argv) < 2) usage();
+
+// Check for file lock (another copy of this program is already running), lock if possible
+$fh = fopen(__FILE__, 'r+');
+if (! flock($fh, LOCK_EX | LOCK_NB)) throw new Exception(TXT_ERROR_FILE_LOCK);
+
+// Initialize iPhone locator
+$i = new iPhoneCommunicator($this_location);
+
+// Set the zone where movement occurred
+if (isset($zones[strtolower($argv[1])]))
+{
+	$zone = $zones[strtolower($argv[1])];
+}
+
+// How far away is the device from this location?
+$distance = $i->distance();
+if ($distance < DEVICE_MIN_DISTANCE)
+{
+	error_log(sprintf(TXT_MOTION_ATHOME, $zone, $distance));
+	exit;
+} else {
+	// Send new alert: Motion detected in {zone}
+	$title = TXT_MOTION_TITLE;
+	$message = sprintf(TXT_MOTION_DETECTED, $zone);
+	$i->send_alert($message, $title);
+}
+
+// Done. Release file lock
+flock($fh, LOCK_UN);
+
+// Misc. functions below
+
+function usage()
+{
+	global $argv;
+	error_log(TXT_ERROR_USAGE);
+	printf("\nUsage: %s {mode}\n", $argv[0]);
+	exit;
+}

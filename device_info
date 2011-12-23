@@ -1,0 +1,14 @@
+#!/usr/bin/php
+<?php
+
+require_once('include/bootstrap.php');
+
+// Initialize iPhone locator
+$i = new iPhoneCommunicator();
+
+if (isset($argv[1]) && isset($i->devices[$argv[1]]))
+{
+	print_r($i->devices[$argv[1]]);
+} else {
+	print_r($i->devices);
+}
