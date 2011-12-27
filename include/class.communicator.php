@@ -4,11 +4,7 @@ class iPhoneCommunicator
 {
 	protected $ssm;
 
-	// Default location if none is provided. Don't want to use this!
-	public $default_location = array(
-		'latitude'	=> 37.332063740371005,
-		'longitude'	=> -122.03089445829391,
-	);
+	public $default_location = array();
 
 	public $default_device = 0;
 
@@ -20,11 +16,16 @@ class iPhoneCommunicator
 
 		if (is_array($default_location) && isset($default_location['latitude']) && isset($default_location['longitude']))
 		{
+			// Use location data provided in object construction
 			$this->default_location = $default_location;
-		/*
+		} else if (defined('HOME_LATITUDE') && defined('HOME_LONGITUDE')) {
+			// Use default location data specified in config
+			$this->default_location = array(
+				'latitude' => HOME_LATITUDE,
+				'longitude' => HOME_LONGITUDE,
+			);
 		} else {
 			throw new Exception(TXT_ERROR_BAD_LOCATION);
-		*/
 		}
 
 		$this->ssm = new Sosumi(ICLOUD_USER, ICLOUD_PASS);

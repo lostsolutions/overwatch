@@ -1,13 +1,23 @@
 <?php
 
+// Your iCloud/MobileMe account info
 define('ICLOUD_USER', '*******@mac.com');
 define('ICLOUD_PASS', '**********');
 
+// Location of site being watched
+define('HOME_LATITUDE',  37.332063740371005);
+define('HOME_LONGITUDE', -122.03089445829391);
+
+// Default device to use location of / send alerts to
 define('DEFAULT_DEVICE', 1);
+
+// Distance device must be from base before being "away"
 define('DEVICE_MIN_DISTANCE', 0.5);
 
+// PHP log file. All application logs go here too.
 define('LOG_FILE', 'alert.log');
 
+// Allows us to eat bacon
 ini_set('display_errors', true);
 error_reporting(E_ALL);
 

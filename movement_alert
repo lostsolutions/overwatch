@@ -11,12 +11,6 @@
 
 require_once('include/bootstrap.php');
 
-// This location
-$this_location = array(
-	'latitude' => '30.158292',
-	'longitude' => '-97.781247',
-);
-
 // Default text to use if cannot find text match for zone
 $zone= 'Unknown location';
 
@@ -44,7 +38,7 @@ $fh = fopen(__FILE__, 'r+');
 if (! flock($fh, LOCK_EX | LOCK_NB)) throw new Exception(TXT_ERROR_FILE_LOCK);
 
 // Initialize iPhone locator
-$i = new iPhoneCommunicator($this_location);
+$i = new iPhoneCommunicator;
 
 // Set the zone where movement occurred
 if (isset($zones[strtolower($argv[1])]))
