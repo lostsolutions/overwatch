@@ -1,6 +1,9 @@
 #!/usr/bin/php
 <?php
 
+// Disable iphone alerts
+$debug = true;
+
 require_once('include/bootstrap.php');
 
 /*
@@ -23,17 +26,18 @@ sleep(4);
 echo "System ready.\n";
 if ($handle)
 {
+
 	while (true)
 	{
 		$message = '';
-		$state = trim(fgets($handle, 20));
+		list($item, $state, $num) = preg_split('/_/', trim(fgets($handle, 20)));
 		switch ($state)
 		{
-			case 'SWITCH_OPEN':
-				alert("Switch loop interrupted");
+			case 'OPEN':
+				alert("Switch {$num} loop interrupted");
 			break;
-			case 'SWITCH_CLOSED':
-				alert("Switch loop restored");
+			case 'CLOSED':
+				alert("Switch {$num} restored to closed state");
 			break;
 		}
 	}
@@ -41,7 +45,13 @@ if ($handle)
 
 function alert($message)
 {
-	global $i;
-	echo date('r') . ": $message. Sending iPhone status update.\n";
-	$i->send_alert("Alert: " . $message, "Arduino Status Update");
+	global $i, $debug;
+	echo date('r') . ": $message. ";
+	if (! isset($debug) || ! $debug)
+	{
+		echo "Sending iPhone status update.\n";
+		$i->send_alert("Alert: " . $message, "Arduino Status Update");
+	} else {
+		echo "Debug mode, no alert sent.\n";
+	}
 }
