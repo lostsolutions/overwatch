@@ -1,0 +1,47 @@
+#!/usr/bin/php
+<?php
+
+require_once('include/bootstrap.php');
+
+/*
+********************************************************************************
+*
+*			    Main Code Block
+*
+********************************************************************************
+*/
+
+// Initialize iPhone locator
+$i = new iPhoneCommunicator;
+
+// Start main loop, read Arduino stream and alert when movement occurs
+# /dev/cu.usbmodem5d21
+
+$handle = fopen('/dev/cu.usbmodem5d21', 'r');
+echo "Pausing to wait for Arduino boot.\n";
+sleep(4);
+echo "System ready.\n";
+if ($handle)
+{
+	while (true)
+	{
+		$message = '';
+		$state = trim(fgets($handle, 20));
+		switch ($state)
+		{
+			case 'SWITCH_OPEN':
+				alert("Switch loop interrupted");
+			break;
+			case 'SWITCH_CLOSED':
+				alert("Switch loop restored");
+			break;
+		}
+	}
+}
+
+function alert($message)
+{
+	global $i;
+	echo date('r') . ": $message. Sending iPhone status update.\n";
+	$i->send_alert("Alert: " . $message, "Arduino Status Update");
+}
